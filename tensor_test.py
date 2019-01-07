@@ -74,7 +74,7 @@ images = [np.zeros(28 * 28 * 28 * 28), np.ones(28 * 28 * 28 * 28)]
 # images=tf.reshape(images,[2,28,28,28,28,1])
 labels = [[1, 0], [0, 1]]
 
-for i in range(100):
+for i in range(10000):
     train_step.run(feed_dict={x: images, y_: labels, keep_prob: 1.0})
 
 print("test accuracy %g" % accuracy.eval(feed_dict={
