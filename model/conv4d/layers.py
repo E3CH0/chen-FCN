@@ -42,60 +42,6 @@ def flatten_layer(layer):
     return layer_flat, num_features
 
 
-def flatten_hex_layer(hex_layer):
-    '''Helper-function for flattening an hexagonally shaped layer
-    Assumes hexagonal shape in the first two spatial dimensions
-    of the form:
-                                    1   1   0             1  1
-                                 1   1   1             1   1   1
-                               0   1   1                 1   1
-    Elements with indices a,b satisfying:
-      a + b < (s-1)//2 or a + b > 2*(s-1) - (s-1)//2
-      where s is the size of the x- and y-dimension
-    will be discarded.
-    These correspond to the elments outside of the hexagon
-    Parameters
-    ----------
-    hex_layer : tf.Tensor
-        Tensor of shape [batch, x, y, ...]
-        Hexagonal layer to be flattended.
-    Returns
-    -------
-    tf.Tensor
-        A Tensor with shape: [batch,x*y*...]
-        Flattened hexagonally shaped layer.
-    Raises
-    ------
-    ValueError
-        Description
-    '''
-
-    # Get the shape of the input layer.
-    layer_shape = hex_layer.get_shape().as_list()
-
-    # The shape of the input layer is assumed to be:
-    # layer_shape == [num_of_events, *dimensions_to_be_flattened]
-
-    size = layer_shape[1]
-    if layer_shape[2] != size:
-        raise ValueError("flatten_hex_layer: size of x- and y- dimension must "
-                         "match, but are {!r}".format(layer_shape[1:3]))
-
-    num_features = np.prod(layer_shape[3:])
-
-    total_num_features = 0
-    flat_elements = []
-    for a in range(size):
-        for b in range(size):
-            if not (a + b < (size-1)//2 or a + b > 2*(size-1) - (size-1)//2):
-                flattened_element = tf.reshape(hex_layer[:, a, b, ],
-                                               [-1, num_features])
-                flat_elements.append(flattened_element)
-                total_num_features += num_features
-
-    hex_layer_flat = tf.concat(flat_elements, axis=1)
-    return hex_layer_flat, total_num_features
-
 
 def new_conv_nd_layer(input,
                       filter_size,
@@ -315,7 +261,7 @@ def new_conv_nd_layer(input,
                                       padding=padding,
                                       dilation_rate=dilation_rate)
         elif num_dims == 4:
-            print(strides[1:-1])
+            # print(strides[1:-1])
             layer = conv.conv4d_stacked(input=input,
                                         filter=weights,
                                         strides=strides,
