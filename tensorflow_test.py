@@ -40,17 +40,17 @@ layer1, layer1_weight, layer1_bias = new_conv_nd_layer(input=x_image, filter_siz
 # W_conv2 = weight_variable([5, 5, 5, 8, 16])
 # b_conv2 = bias_variable([16])
 
-layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=x_image, filter_size=[5, 5, 5, 5], num_filters=16,
+layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size=[5, 5, 5, 5], num_filters=8,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
                                                        strides=[1, 1, 1, 1, 1, 1], padding='SAME',
                                                        method='convolution')
 
 
-W_fc1 = weight_variable([7 * 7 * 7*7 * 16, 1024])
+W_fc1 = weight_variable([7 * 7 * 7*7 * 8, 1024])
 b_fc1 = bias_variable([1024])
 
-h_pool2_flat = tf.reshape(layer2, [-1, 7 * 7 * 7*7 * 16])
+h_pool2_flat = tf.reshape(layer2, [-1, 7 * 7 * 7*7 * 8])
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
 keep_prob = tf.placeholder("float")
