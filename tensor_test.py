@@ -103,6 +103,12 @@ channel_height = channel_data_list.shape[2]
 channel_wide = channel_data_list.shape[3]
 channel_depth = channel_data_list.shape[0]
 
+sum = 20
+flag = 0
+
+train_channel_data = []
+train_channel_label = []
+
 for c in range(0, channel_height, height_step):
     c_down = c + image_height
     if c_down >= channel_height:
@@ -113,31 +119,38 @@ for c in range(0, channel_height, height_step):
         if r_right >= channel_wide:
             break
 
-        train_channel_data = []
-        train_channel_label = []
         for d in range(0, channel_depth, depth_step):
             d_low = d + image_depth
             if d_low >= channel_depth:
                 break
+
             train_image = channel_data_list[d:d_low, 0:9, c:c_down, r:r_right]
             train_image_label = channel_label_list[d + image_depth // 2, c + image_height // 2, r + image_wide // 2]
 
+            if flag > 0 and train_image_label == 0:
+                continue
+            if train_image_label == 1:
+                flag -= 1
+            else:
+                flag += 1
+
             train_channel_data.append(train_image)
             train_channel_label.append(train_image_label)
+print(len(train_channel_data), len(train_channel_label))
 
-            train_channel_data = np.array(train_channel_data)
-            train_channel_label = np.array(train_channel_label)
-            train_channel_data = np.reshape(train_channel_data, [-1, 10, 9, 28, 28, 1])
-            train_channel_data = np.transpose(train_channel_data, (0, 1, 3, 4, 2, 5))
-            print(train_channel_data.shape)
+train_channel_data = np.array(train_channel_data)
+train_channel_label = np.array(train_channel_label)
+train_channel_data = np.reshape(train_channel_data, [-1, 10, 9, 28, 28, 1])
+train_channel_data = np.transpose(train_channel_data, (0, 1, 3, 4, 2, 5))
+print(train_channel_data.shape)
 
-            train_channel_label = keras.utils.to_categorical(train_channel_label, 2)
-            print(train_channel_label.shape)
+train_channel_label = keras.utils.to_categorical(train_channel_label, 2)
+print(train_channel_label.shape)
 
-            train_step.run(feed_dict={x_image: train_channel_data, y_: train_channel_label, keep_prob: 0.6})
-            
-        print("test accuracy %g" % accuracy.eval(feed_dict={
-            x_image: train_channel_data, y_: train_channel_label, keep_prob: 1.0}))
+train_step.run(feed_dict={x_image: train_channel_data, y_: train_channel_label, keep_prob: 0.6})
+
+print("test accuracy %g" % accuracy.eval(feed_dict={
+    x_image: train_channel_data, y_: train_channel_label, keep_prob: 1.0}))
 # test_channel_data = []
 # test_channel_label = []
 # for c in range(channel_height):
