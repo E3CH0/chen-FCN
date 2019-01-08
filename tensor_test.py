@@ -78,8 +78,8 @@ sess.run(tf.initialize_all_variables())
 # images=tf.reshape(images,[2,28,28,28,28,1])
 # labels = [[1, 0], [0, 1]]
 
-channel_data_file_path = "F://echo//bishe//code//DATA//channel.npy"
-channel_label_file_path = "F://echo//bishe//code//DATA//river_3d_label.npy"
+channel_data_file_path = ".//data//channel.npy"
+channel_label_file_path = ".//data//river_3d_label.npy"
 image_wide = 28
 image_height = 28
 image_depth = 10
