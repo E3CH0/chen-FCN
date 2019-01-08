@@ -47,10 +47,10 @@ layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size
                                                        method='convolution')
 print(layer2.shape.as_list())
 
-W_fc1 = weight_variable([2 * 7 * 7 * 9 * 32, 512])
+W_fc1 = weight_variable([2 * 7 * 7 * 9 * 8, 512])
 b_fc1 = bias_variable([512])
 
-h_pool2_flat = tf.reshape(layer2, [-1, 2 * 7 * 7 * 9 * 32])
+h_pool2_flat = tf.reshape(layer2, [-1, 2 * 7 * 7 * 9 * 8])
 print(h_pool2_flat.shape.as_list())
 
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
@@ -138,19 +138,20 @@ for c in range(0, channel_height, height_step):
             train_channel_label.append(train_image_label)
 print(len(train_channel_data), len(train_channel_label))
 
-train_channel_data = np.array(train_channel_data)
-train_channel_label = np.array(train_channel_label)
-train_channel_data = np.reshape(train_channel_data, [-1, 10, 9, 28, 28, 1])
-train_channel_data = np.transpose(train_channel_data, (0, 1, 3, 4, 2, 5))
-print(train_channel_data.shape)
+for i in range(0, len(train_channel_data), 50):
+    train_channel_data_temp = np.array(train_channel_data[i:i + 50])
+    train_channel_label_temp = np.array(train_channel_label[i:i + 50])
+    train_channel_data_temp = np.reshape(train_channel_data_temp, [-1, 10, 9, 28, 28, 1])
+    train_channel_data_temp = np.transpose(train_channel_data_temp, (0, 1, 3, 4, 2, 5))
+    print(train_channel_data_temp.shape)
 
-train_channel_label = keras.utils.to_categorical(train_channel_label, 2)
-print(train_channel_label.shape)
+    train_channel_label_temp = keras.utils.to_categorical(train_channel_label_temp, 2)
+    print(train_channel_label_temp.shape)
 
-train_step.run(feed_dict={x_image: train_channel_data, y_: train_channel_label, keep_prob: 0.6})
+    train_step.run(feed_dict={x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 0.6})
 
-print("test accuracy %g" % accuracy.eval(feed_dict={
-    x_image: train_channel_data, y_: train_channel_label, keep_prob: 1.0}))
+    print("test accuracy %g" % accuracy.eval(feed_dict={
+        x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 1.0}))
 # test_channel_data = []
 # test_channel_label = []
 # for c in range(channel_height):
