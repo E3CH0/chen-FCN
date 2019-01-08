@@ -137,22 +137,21 @@ for c in range(0, channel_height, height_step):
             train_channel_data.append(train_image)
             train_channel_label.append(train_image_label)
 print(len(train_channel_data), len(train_channel_label))
+for train_loop_epoch in range(100):
+    for i in range(0, len(train_channel_data), 50):
+        train_channel_data_temp = np.array(train_channel_data[i:i + 50])
+        train_channel_label_temp = np.array(train_channel_label[i:i + 50])
+        train_channel_data_temp = np.reshape(train_channel_data_temp, [-1, 10, 9, 28, 28, 1])
+        train_channel_data_temp = np.transpose(train_channel_data_temp, (0, 1, 3, 4, 2, 5))
+        print(train_channel_data_temp.shape)
 
-for i in range(0, len(train_channel_data), 50):
-    train_channel_data_temp = np.array(train_channel_data[i:i + 50])
-    train_channel_label_temp = np.array(train_channel_label[i:i + 50])
-    train_channel_data_temp = np.reshape(train_channel_data_temp, [-1, 10, 9, 28, 28, 1])
-    train_channel_data_temp = np.transpose(train_channel_data_temp, (0, 1, 3, 4, 2, 5))
-    print(train_channel_data_temp.shape)
+        train_channel_label_temp = keras.utils.to_categorical(train_channel_label_temp, 2)
+        print(train_channel_label_temp.shape)
 
-    train_channel_label_temp = keras.utils.to_categorical(train_channel_label_temp, 2)
-    print(train_channel_label_temp.shape)
-
-    train_step.run(feed_dict={x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 0.6})
-
-    print("test accuracy %g" % accuracy.eval(feed_dict={
-        x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 1.0}))
-# test_channel_data = []
+        train_step.run(feed_dict={x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 0.6})
+        print("test accuracy %g" % accuracy.eval(feed_dict={
+            x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 1.0}))
+    # test_channel_data = []
 # test_channel_label = []
 # for c in range(channel_height):
 #     c_down = c + image_height
