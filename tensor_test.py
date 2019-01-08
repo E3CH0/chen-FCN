@@ -125,16 +125,16 @@ for c in range(0, channel_height, height_step):
             train_channel_data.append(train_image)
             train_channel_label.append(train_image_label)
 
-    train_channel_data = np.array(train_channel_data)
-    train_channel_label = np.array(train_channel_label)
-    train_channel_data = np.reshape(train_channel_data, [-1, 10, 9, 28, 28, 1])
-    train_channel_data = np.transpose(train_channel_data, (0, 1, 3, 4, 2, 5))
-    print(train_channel_data.shape)
+        train_channel_data = np.array(train_channel_data)
+        train_channel_label = np.array(train_channel_label)
+        train_channel_data = np.reshape(train_channel_data, [-1, 10, 9, 28, 28, 1])
+        train_channel_data = np.transpose(train_channel_data, (0, 1, 3, 4, 2, 5))
+        print(train_channel_data.shape)
 
-    train_channel_label = keras.utils.to_categorical(train_channel_label, 2)
-    print(train_channel_label.shape)
+        train_channel_label = keras.utils.to_categorical(train_channel_label, 2)
+        print(train_channel_label.shape)
 
-    train_step.run(feed_dict={x_image: train_channel_data, y_: train_channel_label, keep_prob: 0.6})
+        train_step.run(feed_dict={x_image: train_channel_data, y_: train_channel_label, keep_prob: 0.6})
     print("test accuracy %g" % accuracy.eval(feed_dict={
         x_image: train_channel_data, y_: train_channel_label, keep_prob: 1.0}))
 # test_channel_data = []
