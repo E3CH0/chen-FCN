@@ -101,7 +101,7 @@ def load_train_data_and_label(channel_data_file_path="F://echo//bishe//code//DAT
 
 if __name__ == '__main__':
     (train_channel_data, train_channel_label) = load_train_data_and_label()
-    # print(train_channel_data.shape,train_channel_label.shape)
+    print(train_channel_data.shape,train_channel_label.shape)
     # print(len(test_channel_data))
     # print("train_channel_data.shape:", train_channel_data.shape)
     # print("train_channel_label:", train_channel_label.shape)
