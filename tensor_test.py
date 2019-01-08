@@ -37,33 +37,42 @@ layer1, layer1_weight, layer1_bias = new_conv_nd_layer(input=x_image, filter_siz
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
                                                        strides=[1, 1, 1, 1, 1, 1], padding='SAME',
                                                        method='convolution')
-
+print(layer1.shape.as_list())
 # W_conv2 = weight_variable([5, 5, 5, 8, 16])
 # b_conv2 = bias_variable([16])
 
-layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size=[5, 5, 5, 5], num_filters=8,
+layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size=[5, 5, 5, 5], num_filters=16,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
                                                        strides=[1, 1, 1, 1, 1, 1], padding='SAME',
                                                        method='convolution')
+print(layer2.shape.as_list())
 
-W_fc1 = weight_variable([7 * 7 * 7 * 7 * 32, 512])
-b_fc1 = bias_variable([512])
+W_fc1 = weight_variable([7 * 7 * 7 * 7 * 64, 1024])
+b_fc1 = bias_variable([1024])
 
-h_pool2_flat = tf.reshape(layer2, [-1, 7 * 7 * 7 * 7 * 32])
+h_pool2_flat = tf.reshape(layer2, [-1, 7 * 7 * 7 * 7 * 64])
+print(h_pool2_flat.shape.as_list())
+
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+print(h_fc1.shape.as_list())
+
+
 
 keep_prob = tf.placeholder("float")
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
+print(h_fc1_drop.shape.as_list())
 
-W_fc2 = weight_variable([512, 2])
+
+W_fc2 = weight_variable([1024, 2])
 b_fc2 = bias_variable([2])
 
 y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+print(y_conv.shape.as_list())
 
 y_ = tf.placeholder("float", [None, 2])
-print(y_)
-print( y_conv )
+
+
 cross_entropy = -tf.reduce_sum(y_ * tf.log(y_conv))
 train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
@@ -74,7 +83,7 @@ images = [np.zeros(28 * 28 * 28 * 28), np.ones(28 * 28 * 28 * 28)]
 # images=tf.reshape(images,[2,28,28,28,28,1])
 labels = [[1, 0], [0, 1]]
 
-for i in range(10000):
+for i in range(100):
     train_step.run(feed_dict={x: images, y_: labels, keep_prob: 1.0})
 
 print("test accuracy %g" % accuracy.eval(feed_dict={
