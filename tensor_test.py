@@ -147,30 +147,27 @@ def creat_batch_data(batch=50):
     return train_channel_data_temp, train_channel_label_temp
 
 
-
 for train_loop_epoch in range(10000):
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=50)
-
-
-
 
     if train_loop_epoch % 100 == 0:
         print("test accuracy %g" % accuracy.eval(feed_dict={
             x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
 
-        prediction = tf.argmax(y_conv, 1)
+        # prediction = tf.argmax(y_conv,1)
 
         sum_channel = 0
         prediction_correct_channel = 0
         for i in range(50):
-            if train_channel_label_current[0] == 1:
+            if train_channel_label_current[i][1] == 1:
                 sum_channel += 1
-            else:
-                continue
-            if prediction[0] < prediction[1]:
-                prediction_correct_channel += 1
+            # else:
+                # continue
+            # if prediction[0] < prediction[1]:
+                # prediction_correct_channel += 1
 
         print(sum_channel, prediction_correct_channel)
+
     train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
 
