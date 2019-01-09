@@ -1,3 +1,5 @@
+import random
+
 import keras
 import numpy as np
 import tensorflow as tf
@@ -34,7 +36,7 @@ x_image = tf.placeholder("float", shape=[None, 10, 28, 28, 9, 1])
 layer1, layer1_weight, layer1_bias = new_conv_nd_layer(input=x_image, filter_size=[5, 5, 5, 5], num_filters=8,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
-                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME',activation='prelu',
+                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='prelu',
                                                        method='convolution')
 print(layer1.shape.as_list())
 # W_conv2 = weight_variable([5, 5, 5, 8, 16])
@@ -43,7 +45,7 @@ print(layer1.shape.as_list())
 layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size=[5, 5, 5, 5], num_filters=16,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
-                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME',activation='prelu',
+                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='prelu',
                                                        method='convolution')
 print(layer2.shape.as_list())
 
@@ -92,23 +94,17 @@ left = 0
 right = 150
 high = 0
 low = 29
-
 channel_data_list = np.load(channel_data_file_path)
 channel_data_list = channel_data_list[high:low, 0:9, up:down, left:right]
-
 channel_label_list = np.load(channel_label_file_path)
 channel_label_list = channel_label_list[high:low, up:down, left:right]
-
 channel_height = channel_data_list.shape[2]
 channel_wide = channel_data_list.shape[3]
 channel_depth = channel_data_list.shape[0]
-
 sum = 20
 flag = 0
-
 train_channel_data = []
 train_channel_label = []
-
 for c in range(0, channel_height, height_step):
     c_down = c + image_height
     if c_down >= channel_height:
@@ -137,20 +133,47 @@ for c in range(0, channel_height, height_step):
             train_channel_data.append(train_image)
             train_channel_label.append(train_image_label)
 print(len(train_channel_data), len(train_channel_label))
-for train_loop_epoch in range(100):
-    for i in range(0, len(train_channel_data),25):
-        train_channel_data_temp = np.array(train_channel_data[i:i + 50])
-        train_channel_label_temp = np.array(train_channel_label[i:i + 50])
-        train_channel_data_temp = np.reshape(train_channel_data_temp, [-1, 10, 9, 28, 28, 1])
-        train_channel_data_temp = np.transpose(train_channel_data_temp, (0, 1, 3, 4, 2, 5))
-        print(train_channel_data_temp.shape)
 
-        train_channel_label_temp = keras.utils.to_categorical(train_channel_label_temp, 2)
-        print(train_channel_label_temp.shape)
 
-        train_step.run(feed_dict={x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 0.6})
+def creat_batch_data(batch=50):
+    start = random.randint(0, len(train_channel_data) - batch)
+    train_channel_data_temp = np.array(train_channel_data[start:start + batch])
+    train_channel_label_temp = np.array(train_channel_label[start:start + batch])
+    train_channel_data_temp = np.reshape(train_channel_data_temp, [-1, 10, 9, 28, 28, 1])
+    train_channel_data_temp = np.transpose(train_channel_data_temp, (0, 1, 3, 4, 2, 5))
+    print(train_channel_data_temp.shape)
+    train_channel_label_temp = keras.utils.to_categorical(train_channel_label_temp, 2)
+    print(train_channel_label_temp.shape)
+    return train_channel_data_temp, train_channel_label_temp
+
+
+
+for train_loop_epoch in range(10000):
+    train_channel_data_current, train_channel_label_current = creat_batch_data(batch=50)
+
+
+
+
+    if train_loop_epoch % 100 == 0:
         print("test accuracy %g" % accuracy.eval(feed_dict={
-            x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 1.0}))
+            x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
+
+        prediction = tf.argmax(y_conv, 1)
+
+        sum_channel = 0
+        prediction_correct_channel = 0
+        for i in range(50):
+            if train_channel_label_current[0] == 1:
+                sum_channel += 1
+            else:
+                continue
+            if prediction[0] < prediction[1]:
+                prediction_correct_channel += 1
+
+        print(sum_channel, prediction_correct_channel)
+    train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
+
+
 
 # test_channel_data = []
 # test_channel_label = []
