@@ -34,7 +34,7 @@ x_image = tf.placeholder("float", shape=[None, 10, 28, 28, 9, 1])
 layer1, layer1_weight, layer1_bias = new_conv_nd_layer(input=x_image, filter_size=[5, 5, 5, 5], num_filters=8,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
-                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME',
+                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME',activation='prelu',
                                                        method='convolution')
 print(layer1.shape.as_list())
 # W_conv2 = weight_variable([5, 5, 5, 8, 16])
@@ -43,7 +43,7 @@ print(layer1.shape.as_list())
 layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size=[5, 5, 5, 5], num_filters=16,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
-                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME',
+                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME',activation='prelu',
                                                        method='convolution')
 print(layer2.shape.as_list())
 
@@ -151,7 +151,8 @@ for train_loop_epoch in range(100):
         train_step.run(feed_dict={x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 0.6})
         print("test accuracy %g" % accuracy.eval(feed_dict={
             x_image: train_channel_data_temp, y_: train_channel_label_temp, keep_prob: 1.0}))
-    # test_channel_data = []
+
+# test_channel_data = []
 # test_channel_label = []
 # for c in range(channel_height):
 #     c_down = c + image_height
