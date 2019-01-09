@@ -141,16 +141,16 @@ def creat_batch_data(batch=50):
     train_channel_label_temp = np.array(train_channel_label[start:start + batch])
     train_channel_data_temp = np.reshape(train_channel_data_temp, [-1, 10, 9, 28, 28, 1])
     train_channel_data_temp = np.transpose(train_channel_data_temp, (0, 1, 3, 4, 2, 5))
-    print(train_channel_data_temp.shape)
+    # print(train_channel_data_temp.shape)
     train_channel_label_temp = keras.utils.to_categorical(train_channel_label_temp, 2)
-    print(train_channel_label_temp.shape)
+    # print(train_channel_label_temp.shape)
     return train_channel_data_temp, train_channel_label_temp
 
 
 for train_loop_epoch in range(10000):
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=50)
 
-    if train_loop_epoch % 100 == 0:
+    if train_loop_epoch % 10 == 0:
         print("test accuracy %g" % accuracy.eval(feed_dict={
             x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
 
