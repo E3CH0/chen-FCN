@@ -1,7 +1,7 @@
 import keras
 import numpy as np
 import tensorflow as tf
-
+import random
 from model.conv4d.layers import new_conv_nd_layer
 
 sess = tf.InteractiveSession()
