@@ -134,8 +134,8 @@ print(len(train_channel_data), len(train_channel_label))
 
 
 def creat_batch_data(batch=50):
-    # start = random.randint(0, len(train_channel_data) - batch)
-    start = 0
+    start = random.randint(0, len(train_channel_data) - batch)
+    # start = 0
     train_channel_data_temp = np.array(train_channel_data[start:start + batch])
     train_channel_label_temp = np.array(train_channel_label[start:start + batch])
     train_channel_data_temp = np.reshape(train_channel_data_temp, [-1, 10, 9, 28, 28, 1])
@@ -149,26 +149,34 @@ def creat_batch_data(batch=50):
 for train_loop_epoch in range(10000):
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=50)
 
-    if train_loop_epoch % 10 == 0:
-        print("test accuracy %g" % accuracy.eval(feed_dict={
+    print("test accuracy %g" % accuracy.eval(feed_dict={
+        x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
+
+    for train_batch_loop in range(100):
+        train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
+
+        print("train accuracy %g" % accuracy.eval(feed_dict={
             x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
         print("loss: %g" % cross_entropy.eval(feed_dict={
             x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
+
+    print("train accuracy %g" % accuracy.eval(feed_dict={
+        x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
         # prediction = tf.argmax(y_conv,1)
 
-        sum_channel = 0
-        prediction_correct_channel = 0
-        for i in range(50):
-            if train_channel_label_current[i][1] == 1:
-                sum_channel += 1
+        # sum_channel = 0
+        # prediction_correct_channel = 0
+        # for i in range(50):
+        #     if train_channel_label_current[i][1] == 1:
+        #         sum_channel += 1
                 # else:
                 # continue
                 # if prediction[0] < prediction[1]:
                 # prediction_correct_channel += 1
 
-        print(sum_channel, prediction_correct_channel)
+        # print(sum_channel, prediction_correct_channel)
 
-    train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
+
 
 
 
