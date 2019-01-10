@@ -47,8 +47,8 @@ layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size
                                                        method='convolution')
 print(layer2.shape.as_list())
 
-W_fc1 = weight_variable([2 * 7 * 7 * 9 * 32, 1024])
-b_fc1 = bias_variable([1024])
+W_fc1 = weight_variable([2 * 7 * 7 * 9 * 32, 512])
+b_fc1 = bias_variable([512])
 
 h_pool2_flat = tf.reshape(layer2, [-1, 2 * 7 * 7 * 9 * 32])
 print(h_pool2_flat.shape.as_list())
@@ -60,7 +60,7 @@ keep_prob = tf.placeholder("float")
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 print(h_fc1_drop.shape.as_list())
 
-W_fc2 = weight_variable([1024, 2])
+W_fc2 = weight_variable([512, 2])
 b_fc2 = bias_variable([2])
 
 y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
