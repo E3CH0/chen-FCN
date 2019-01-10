@@ -149,10 +149,11 @@ def creat_batch_data(batch=50):
 for train_loop_epoch in range(10000):
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=50)
 
+    print('-----------------------------------------------------------')
     print("test accuracy %g" % accuracy.eval(feed_dict={
         x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
 
-    for train_batch_loop in range(100):
+    for train_batch_loop in range(1000):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
         print("train accuracy %g" % accuracy.eval(feed_dict={
@@ -160,8 +161,8 @@ for train_loop_epoch in range(10000):
         print("loss: %g" % cross_entropy.eval(feed_dict={
             x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
 
-    print("train accuracy %g" % accuracy.eval(feed_dict={
-        x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
+    # print("train accuracy %g" % accuracy.eval(feed_dict={
+    #     x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
         # prediction = tf.argmax(y_conv,1)
 
         # sum_channel = 0
