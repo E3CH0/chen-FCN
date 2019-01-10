@@ -156,10 +156,11 @@ for train_loop_epoch in range(10000):
     for train_batch_loop in range(1000):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
-        print("train accuracy %g" % accuracy.eval(feed_dict={
-            x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
-        print("loss: %g" % cross_entropy.eval(feed_dict={
-            x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
+        if train_batch_loop%100==0:
+            print("train accuracy %g" % accuracy.eval(feed_dict={
+                x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
+            print("loss: %g" % cross_entropy.eval(feed_dict={
+                x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
 
     # print("train accuracy %g" % accuracy.eval(feed_dict={
     #     x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
