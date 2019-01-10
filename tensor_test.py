@@ -15,7 +15,7 @@ def weight_variable(shape):
 
 
 def bias_variable(shape):
-    initial = tf.constant(0.1, shape=shape)
+    initial = tf.constant(5.1, shape=shape)
     return tf.Variable(initial)
 
 
@@ -36,7 +36,7 @@ x_image = tf.placeholder("float", shape=[None, 10, 28, 28, 9, 1])
 layer1, layer1_weight, layer1_bias = new_conv_nd_layer(input=x_image, filter_size=[5, 5, 5, 5], num_filters=8,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
-                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='prelu',
+                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='relu',
                                                        method='convolution')
 print(layer1.shape.as_list())
 # W_conv2 = weight_variable([5, 5, 5, 8, 16])
@@ -45,7 +45,7 @@ print(layer1.shape.as_list())
 layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size=[5, 5, 5, 5], num_filters=16,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
-                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='prelu',
+                                                       strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='relu',
                                                        method='convolution')
 print(layer2.shape.as_list())
 
