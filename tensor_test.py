@@ -31,7 +31,7 @@ x_image = tf.placeholder("float", shape=[None, 10, 28, 28, 9, 1])
 # W_conv1 = weight_variable([5, 5, 5, 5, 1, 8])
 # b_conv1 = bias_variable([8])
 
-layer1, layer1_weight, layer1_bias = new_conv_nd_layer(input=x_image, filter_size=[5, 5, 5, 5], num_filters=16,
+layer1, layer1_weight, layer1_bias = new_conv_nd_layer(input=x_image, filter_size=[5, 5, 5, 5], num_filters=8,
                                                        pooling_type='max', pooling_strides=[1, 2, 2, 2, 1, 1],
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
                                                        strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='relu',
