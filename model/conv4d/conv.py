@@ -1,12 +1,4 @@
-'''
-Conv functions for tfscripts:
-    convolution helper functions,
-    locally connected 2d and 3d convolutions,
-    dynamic 2d and 3d convolution,
-    local trafo 2d and 3d,
-    wrapper: trafo on patch 2d and 3d
-    stacked convolution 3d and 4d
-'''
+
 
 from __future__ import division, print_function
 

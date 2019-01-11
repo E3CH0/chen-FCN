@@ -1,7 +1,4 @@
-'''
-Core functions of tfscripts:
-    Create weights and biases
-'''
+
 
 from __future__ import division, print_function
 

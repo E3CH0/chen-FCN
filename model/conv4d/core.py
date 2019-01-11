@@ -1,7 +1,4 @@
-'''
-Core functions of tfscripts:
-    Add residuals, batch normalisation, activation,
-'''
+
 
 from __future__ import division, print_function
 

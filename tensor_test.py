@@ -1,7 +1,9 @@
+import random
+
 import keras
 import numpy as np
 import tensorflow as tf
-import random
+
 from model.conv4d.layers import new_conv_nd_layer
 
 sess = tf.InteractiveSession()
@@ -156,27 +158,28 @@ for train_loop_epoch in range(10000):
     for train_batch_loop in range(1000):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
-        if train_batch_loop%100==0:
-            print("train accuracy %g" % accuracy.eval(feed_dict={
-                x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
-            print("loss: %g" % cross_entropy.eval(feed_dict={
-                x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
+        if train_batch_loop % 100 == 0:
+            feed_dict = {x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}
 
-    # print("train accuracy %g" % accuracy.eval(feed_dict={
-    #     x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
-        # prediction = tf.argmax(y_conv,1)
+            train_accuracy,cross_enctropy= sess.run([accuracy, cross_entropy], feed_dict=feed_dict)
+            print("train accuracy: %g" % train_accuracy,"cross_enctropy: %g",cross_enctropy)
 
-        # sum_channel = 0
-        # prediction_correct_channel = 0
-        # for i in range(50):
-        #     if train_channel_label_current[i][1] == 1:
-        #         sum_channel += 1
-                # else:
-                # continue
-                # if prediction[0] < prediction[1]:
-                # prediction_correct_channel += 1
 
-        # print(sum_channel, prediction_correct_channel)
+            # print("train accuracy %g" % accuracy.eval(feed_dict={
+            #     x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
+            # prediction = tf.argmax(y_conv,1)
+
+            # sum_channel = 0
+            # prediction_correct_channel = 0
+            # for i in range(50):
+            #     if train_channel_label_current[i][1] == 1:
+            #         sum_channel += 1
+            # else:
+            # continue
+            # if prediction[0] < prediction[1]:
+            # prediction_correct_channel += 1
+
+            # print(sum_channel, prediction_correct_channel)
 
 
 
