@@ -38,7 +38,7 @@ layer1, layer1_weight, layer1_bias = new_conv_nd_layer(input=x_image, filter_siz
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
                                                        strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='relu',
                                                        method='convolution')
-print(layer1.shape.as_list())
+# print(layer1.shape.as_list())
 # W_conv2 = weight_variable([5, 5, 5, 8, 16])
 # b_conv2 = bias_variable([16])
 
@@ -47,31 +47,32 @@ layer2, layer2_weight, layer2_bias = new_conv_nd_layer(input=layer1, filter_size
                                                        pooling_ksize=[1, 2, 2, 2, 1, 1], pooling_padding='VALID',
                                                        strides=[1, 1, 1, 1, 1, 1], padding='SAME', activation='relu',
                                                        method='convolution')
-print(layer2.shape.as_list())
+# print(layer2.shape.as_list())
 
 W_fc1 = weight_variable([2 * 7 * 7 * 9 * 16, 512])
 b_fc1 = bias_variable([512])
 
 h_pool2_flat = tf.reshape(layer2, [-1, 2 * 7 * 7 * 9 * 16])
-print(h_pool2_flat.shape.as_list())
+# print(h_pool2_flat.shape.as_list())
 
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
-print(h_fc1.shape.as_list())
+# print(h_fc1.shape.as_list())
 
 keep_prob = tf.placeholder("float")
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
-print(h_fc1_drop.shape.as_list())
+# print(h_fc1_drop.shape.as_list())
 
 W_fc2 = weight_variable([512, 2])
 b_fc2 = bias_variable([2])
 
 y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
-print(y_conv.shape.as_list())
+# print(y_conv.shape.as_list())
 
 y_ = tf.placeholder("float", [None, 2])
 
 cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-8, tf.reduce_max(y_conv))))
 train_step = tf.train.AdamOptimizer(0.00001).minimize(cross_entropy)
+index_order=tf.argmax(y_conv, 1)
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 sess.run(tf.initialize_all_variables())
@@ -154,15 +155,17 @@ for train_loop_epoch in range(10000):
     print('-----------------------------------------------------------')
     print("test accuracy %g" % accuracy.eval(feed_dict={
         x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
-
+    print(train_channel_label_current)
+    
     for train_batch_loop in range(1000):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
         if train_batch_loop % 100 == 0:
             feed_dict = {x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}
 
-            train_accuracy,cross_enctropy= sess.run([accuracy, cross_entropy], feed_dict=feed_dict)
+            train_accuracy,cross_enctropy,index= sess.run([accuracy, cross_entropy,index_order], feed_dict=feed_dict)
             print("train accuracy: %g" % train_accuracy,"cross_enctropy: %g",cross_enctropy)
+            print(index)
 
 
             # print("train accuracy %g" % accuracy.eval(feed_dict={
