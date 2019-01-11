@@ -72,7 +72,7 @@ y_ = tf.placeholder("float", [None, 2])
 
 cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-8, tf.reduce_max(y_conv))))
 train_step = tf.train.AdamOptimizer(0.00001).minimize(cross_entropy)
-index_order=tf.argmax(y_conv, 1)
+index_order = tf.argmax(y_conv, 1)
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 sess.run(tf.initialize_all_variables())
@@ -155,16 +155,22 @@ for train_loop_epoch in range(10000):
     print('-----------------------------------------------------------')
     print("test accuracy %g" % accuracy.eval(feed_dict={
         x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
-    print(train_channel_label_current)
-    
+    sum_channel=0
+    for i in range(50):
+        if train_channel_label_current[i][1] == 1:
+            sum_channel += 1
+    print(train_channel_label_current[:, 1],sum_channel)
+
+
     for train_batch_loop in range(1000):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
         if train_batch_loop % 100 == 0:
             feed_dict = {x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}
 
-            train_accuracy,cross_enctropy,index= sess.run([accuracy, cross_entropy,index_order], feed_dict=feed_dict)
-            print("train accuracy: %g" % train_accuracy,"cross_enctropy: %g",cross_enctropy)
+            train_accuracy, cross_enctropy, index = sess.run([accuracy, cross_entropy, index_order],
+                                                             feed_dict=feed_dict)
+            print("train accuracy: %g" % train_accuracy, "cross_enctropy: %g", cross_enctropy)
             print(index)
 
 
