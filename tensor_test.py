@@ -149,7 +149,7 @@ def creat_batch_data(batch=50):
     return train_channel_data_temp, train_channel_label_temp
 
 
-for train_loop_epoch in range(10000):
+for train_loop_epoch in range(100):
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=50)
 
     print('-----------------------------------------------------------')
