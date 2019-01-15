@@ -28,7 +28,7 @@ def max_pool_2x2x2(x):
                             strides=[1, 2, 2, 2, 1], padding='SAME')
 
 
-x_image = tf.placeholder("float", shape=[None, 10, 28, 28, 9, 1])
+x_image = tf.placeholder("float", shape=[None, 10, 28, 28, 9, 1],name='input')
 
 # W_conv1 = weight_variable([5, 5, 5, 5, 1, 8])
 # b_conv1 = bias_variable([8])
@@ -65,75 +65,83 @@ h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 W_fc2 = weight_variable([512, 2])
 b_fc2 = bias_variable([2])
 
-y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2,name='y_conv')
+print(y_conv.shape.as_list())
 # print(y_conv.shape.as_list())
 
 y_ = tf.placeholder("float", [None, 2])
 
 cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-8, tf.reduce_max(y_conv))))
 train_step = tf.train.AdamOptimizer(0.00001).minimize(cross_entropy)
-index_order = tf.argmax(y_conv, 1)
+index_order = tf.argmax(y_conv, 1,name='result')
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 sess.run(tf.initialize_all_variables())
 
+saver=tf.train.Saver()
 # images = [np.zeros(28 * 28 * 28 * 28), np.ones(28 * 28 * 28 * 28)]
 # images=tf.reshape(images,[2,28,28,28,28,1])
 # labels = [[1, 0], [0, 1]]
 
-channel_data_file_path = ".//data//channel.npy"
-channel_label_file_path = ".//data//river_3d_label.npy"
-image_wide = 28
-image_height = 28
-image_depth = 10
-wide_step = 5
-height_step = 5
-depth_step = 5
-up = 51
-down = 201
-left = 0
-right = 150
-high = 0
-low = 29
-channel_data_list = np.load(channel_data_file_path)
-channel_data_list = channel_data_list[high:low, 0:9, up:down, left:right]
-channel_label_list = np.load(channel_label_file_path)
-channel_label_list = channel_label_list[high:low, up:down, left:right]
-channel_height = channel_data_list.shape[2]
-channel_wide = channel_data_list.shape[3]
-channel_depth = channel_data_list.shape[0]
-sum = 20
-flag = 0
-train_channel_data = []
-train_channel_label = []
-for c in range(0, channel_height, height_step):
-    c_down = c + image_height
-    if c_down >= channel_height:
-        break
-
-    for r in range(0, channel_wide, wide_step):
-        r_right = r + image_wide
-        if r_right >= channel_wide:
+def creat_train_data():
+    # global train_channel_data, train_channel_label
+    channel_data_file_path = ".//data//channel.npy"
+    channel_label_file_path = ".//data//river_3d_label.npy"
+    image_wide = 28
+    image_height = 28
+    image_depth = 10
+    wide_step = 5
+    height_step = 5
+    depth_step = 5
+    up = 51
+    down = 201
+    left = 0
+    right = 150
+    high = 0
+    low = 29
+    channel_data_list = np.load(channel_data_file_path)
+    channel_data_list = channel_data_list[high:low, 0:9, up:down, left:right]
+    channel_label_list = np.load(channel_label_file_path)
+    channel_label_list = channel_label_list[high:low, up:down, left:right]
+    channel_height = channel_data_list.shape[2]
+    channel_wide = channel_data_list.shape[3]
+    channel_depth = channel_data_list.shape[0]
+    sum = 20
+    flag = 0
+    train_channel_data = []
+    train_channel_label = []
+    for c in range(0, channel_height, height_step):
+        c_down = c + image_height
+        if c_down >= channel_height:
             break
 
-        for d in range(0, channel_depth, depth_step):
-            d_low = d + image_depth
-            if d_low >= channel_depth:
+        for r in range(0, channel_wide, wide_step):
+            r_right = r + image_wide
+            if r_right >= channel_wide:
                 break
 
-            train_image = channel_data_list[d:d_low, 0:9, c:c_down, r:r_right]
-            train_image_label = channel_label_list[d + image_depth // 2, c + image_height // 2, r + image_wide // 2]
+            for d in range(0, channel_depth, depth_step):
+                d_low = d + image_depth
+                if d_low >= channel_depth:
+                    break
 
-            if flag > 0 and train_image_label == 0:
-                continue
-            if train_image_label == 1:
-                flag -= 1
-            else:
-                flag += 1
+                train_image = channel_data_list[d:d_low, 0:9, c:c_down, r:r_right]
+                train_image_label = channel_label_list[d + image_depth // 2, c + image_height // 2, r + image_wide // 2]
 
-            train_channel_data.append(train_image)
-            train_channel_label.append(train_image_label)
-print(len(train_channel_data), len(train_channel_label))
+                if flag > 0 and train_image_label == 0:
+                    continue
+                if train_image_label == 1:
+                    flag -= 1
+                else:
+                    flag += 1
+
+                train_channel_data.append(train_image)
+                train_channel_label.append(train_image_label)
+                return train_channel_data,train_channel_label
+    print(len(train_channel_data), len(train_channel_label))
+
+
+train_channel_data,train_channel_label=creat_train_data()
 
 
 def creat_batch_data(batch=50):
@@ -149,20 +157,21 @@ def creat_batch_data(batch=50):
     return train_channel_data_temp, train_channel_label_temp
 
 
-for train_loop_epoch in range(100):
-    train_channel_data_current, train_channel_label_current = creat_batch_data(batch=50)
+for train_loop_epoch in range(1):
+    batch=1
+    train_channel_data_current, train_channel_label_current = creat_batch_data(batch=batch)
 
     print('-----------------------------------------------------------')
     print("test accuracy %g" % accuracy.eval(feed_dict={
         x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
     sum_channel=0
-    for i in range(50):
+    for i in range(batch):
         if train_channel_label_current[i][1] == 1:
             sum_channel += 1
     print(train_channel_label_current[:, 1],sum_channel)
 
 
-    for train_batch_loop in range(1000):
+    for train_batch_loop in range(1):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
         if train_batch_loop % 100 == 0:
@@ -190,8 +199,9 @@ for train_loop_epoch in range(100):
 
             # print(sum_channel, prediction_correct_channel)
 
+#save model and args
 
-
+saver.save(sess,".//model//tensorflow_4d_Model")
 
 
 # test_channel_data = []
