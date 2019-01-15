@@ -28,7 +28,7 @@ def max_pool_2x2x2(x):
                             strides=[1, 2, 2, 2, 1], padding='SAME')
 
 
-x_image = tf.placeholder("float", shape=[None, 10, 28, 28, 9, 1],name='input')
+x_image = tf.placeholder("float", shape=[None, 10, 28, 28, 9, 1], name="input")
 
 # W_conv1 = weight_variable([5, 5, 5, 5, 1, 8])
 # b_conv1 = bias_variable([8])
@@ -58,27 +58,30 @@ h_pool2_flat = tf.reshape(layer2, [-1, 2 * 7 * 7 * 9 * 16])
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 # print(h_fc1.shape.as_list())
 
-keep_prob = tf.placeholder("float")
+keep_prob = tf.placeholder("float", name="keep_prob")
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 # print(h_fc1_drop.shape.as_list())
 
 W_fc2 = weight_variable([512, 2])
 b_fc2 = bias_variable([2])
 
-y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2,name='y_conv')
+y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2, name="output")
 print(y_conv.shape.as_list())
 # print(y_conv.shape.as_list())
+index_order = tf.argmax(y_conv, 1, name="result_order")
 
-y_ = tf.placeholder("float", [None, 2])
+y_ = tf.placeholder("float", [None, 2], name='label')
 
-cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-8, tf.reduce_max(y_conv))))
+cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-8, tf.reduce_max(y_conv))), name='cross')
 train_step = tf.train.AdamOptimizer(0.00001).minimize(cross_entropy)
-index_order = tf.argmax(y_conv, 1,name='result')
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-sess.run(tf.initialize_all_variables())
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"), name='acc')
+# sess.run(tf.initialize_all_variables())
+sess.run(tf.global_variables_initializer())
 
-saver=tf.train.Saver()
+saver = tf.train.Saver()
+
+
 # images = [np.zeros(28 * 28 * 28 * 28), np.ones(28 * 28 * 28 * 28)]
 # images=tf.reshape(images,[2,28,28,28,28,1])
 # labels = [[1, 0], [0, 1]]
@@ -137,11 +140,11 @@ def creat_train_data():
 
                 train_channel_data.append(train_image)
                 train_channel_label.append(train_image_label)
-                return train_channel_data,train_channel_label
+                return train_channel_data, train_channel_label
     print(len(train_channel_data), len(train_channel_label))
 
 
-train_channel_data,train_channel_label=creat_train_data()
+train_channel_data, train_channel_label = creat_train_data()
 
 
 def creat_batch_data(batch=50):
@@ -157,21 +160,20 @@ def creat_batch_data(batch=50):
     return train_channel_data_temp, train_channel_label_temp
 
 
-for train_loop_epoch in range(1):
-    batch=1
+for train_loop_epoch in range(10):
+    batch = 1
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=batch)
 
     print('-----------------------------------------------------------')
     print("test accuracy %g" % accuracy.eval(feed_dict={
         x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
-    sum_channel=0
+    sum_channel = 0
     for i in range(batch):
         if train_channel_label_current[i][1] == 1:
             sum_channel += 1
-    print(train_channel_label_current[:, 1],sum_channel)
+    print(train_channel_label_current[:, 1], sum_channel)
 
-
-    for train_batch_loop in range(1):
+    for train_batch_loop in range(10):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
         if train_batch_loop % 100 == 0:
@@ -199,9 +201,12 @@ for train_loop_epoch in range(1):
 
             # print(sum_channel, prediction_correct_channel)
 
-#save model and args
+# save model and args
+train_channel_data_current, train_channel_label_current = creat_batch_data(batch=1)
+print(train_channel_data_current.shape)
+print(sess.run(index_order, feed_dict={x_image: train_channel_data_current, keep_prob: 1.0}))
 
-saver.save(sess,".//model//tensorflow_4d_Model")
+saver.save(sess, ".//model//tensorflow_model//tensorflow_4d_Model")
 
 
 # test_channel_data = []
