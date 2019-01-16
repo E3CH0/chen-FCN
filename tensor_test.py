@@ -173,10 +173,10 @@ for train_loop_epoch in range(1800):
             sum_channel += 1
     print(train_channel_label_current[:, 1], sum_channel)
 
-    for train_batch_loop in range(100):
+    for train_batch_loop in range(1000):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
-        if train_batch_loop % 100 == 0:
+        if train_batch_loop % 200 == 0:
             feed_dict = {x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}
 
             train_accuracy, cross_enctropy, index = sess.run([accuracy, cross_entropy, index_order],
