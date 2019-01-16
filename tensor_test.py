@@ -140,8 +140,8 @@ def creat_train_data():
 
                 train_channel_data.append(train_image)
                 train_channel_label.append(train_image_label)
-                return train_channel_data, train_channel_label
     print(len(train_channel_data), len(train_channel_label))
+    return train_channel_data, train_channel_label
 
 
 train_channel_data, train_channel_label = creat_train_data()
@@ -160,7 +160,7 @@ def creat_batch_data(batch=50):
     return train_channel_data_temp, train_channel_label_temp
 
 
-for train_loop_epoch in range(10):
+for train_loop_epoch in range(1800):
     batch = 1
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=batch)
 
@@ -173,7 +173,7 @@ for train_loop_epoch in range(10):
             sum_channel += 1
     print(train_channel_label_current[:, 1], sum_channel)
 
-    for train_batch_loop in range(10):
+    for train_batch_loop in range(100):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
         if train_batch_loop % 100 == 0:
@@ -202,9 +202,9 @@ for train_loop_epoch in range(10):
             # print(sum_channel, prediction_correct_channel)
 
 # save model and args
-train_channel_data_current, train_channel_label_current = creat_batch_data(batch=1)
-print(train_channel_data_current.shape)
-print(sess.run(index_order, feed_dict={x_image: train_channel_data_current, keep_prob: 1.0}))
+# train_channel_data_current, train_channel_label_current = creat_batch_data(batch=2)
+# print(train_channel_data_current.shape)
+# print(sess.run(index_order, feed_dict={x_image: train_channel_data_current, keep_prob: 1.0}))
 
 saver.save(sess, ".//model//tensorflow_model//tensorflow_4d_Model")
 
