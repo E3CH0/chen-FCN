@@ -79,7 +79,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"), name='acc')
 sess.run(tf.initialize_all_variables())
 # sess.run(tf.global_variables_initializer())
 
-saver = tf.train.Saver(max_to_keep=2, keep_checkpoint_every_n_hours=0.02)
+saver = tf.train.Saver(max_to_keep=1, keep_checkpoint_every_n_hours=1.0)
 
 
 # images = [np.zeros(28 * 28 * 28 * 28), np.ones(28 * 28 * 28 * 28)]
@@ -160,8 +160,7 @@ def creat_batch_data(batch=50):
     return train_channel_data_temp, train_channel_label_temp
 
 
-for train_loop_epoch in range(1800):
-    saver.save(sess, ".//model//tensorflow_model//tensorflow_4d_Model")
+for train_loop_epoch in range(32):
 
     batch = 50
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=batch)
@@ -175,10 +174,11 @@ for train_loop_epoch in range(1800):
             sum_channel += 1
     print(train_channel_label_current[:, 1], sum_channel)
 
-    for train_batch_loop in range(1):
+    for train_batch_loop in range(500):
+
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
-        if train_batch_loop % 200 == 0:
+        if train_batch_loop % 100 == 0:
             feed_dict = {x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}
 
             train_accuracy, cross_enctropy, index = sess.run([accuracy, cross_entropy, index_order],
@@ -186,6 +186,7 @@ for train_loop_epoch in range(1800):
             print("train accuracy: %g" % train_accuracy, "cross_enctropy: %g" % cross_enctropy)
             print(index)
 
+    saver.save(sess, ".//model//tensorflow_model//tensorflow_4d_Model")
 
             # print("train accuracy %g" % accuracy.eval(feed_dict={
             #     x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 1.0}))
