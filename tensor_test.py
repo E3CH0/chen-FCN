@@ -76,8 +76,8 @@ cross_entropy = -tf.reduce_sum(y_ * tf.log(tf.clip_by_value(y_conv, 1e-8, tf.red
 train_step = tf.train.AdamOptimizer(0.00001).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"), name='acc')
-# sess.run(tf.initialize_all_variables())
-sess.run(tf.global_variables_initializer())
+sess.run(tf.initialize_all_variables())
+# sess.run(tf.global_variables_initializer())
 
 saver = tf.train.Saver()
 
