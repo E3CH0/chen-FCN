@@ -79,7 +79,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"), name='acc')
 sess.run(tf.initialize_all_variables())
 # sess.run(tf.global_variables_initializer())
 
-saver = tf.train.Saver(max_to_keep=1, keep_checkpoint_every_n_hours=1)
+saver = tf.train.Saver(max_to_keep=2, keep_checkpoint_every_n_hours=0.02)
 
 
 # images = [np.zeros(28 * 28 * 28 * 28), np.ones(28 * 28 * 28 * 28)]
@@ -161,6 +161,8 @@ def creat_batch_data(batch=50):
 
 
 for train_loop_epoch in range(1800):
+    saver.save(sess, ".//model//tensorflow_model//tensorflow_4d_Model")
+
     batch = 50
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=batch)
 
@@ -173,7 +175,7 @@ for train_loop_epoch in range(1800):
             sum_channel += 1
     print(train_channel_label_current[:, 1], sum_channel)
 
-    for train_batch_loop in range(1000):
+    for train_batch_loop in range(1):
         train_step.run(feed_dict={x_image: train_channel_data_current, y_: train_channel_label_current, keep_prob: 0.6})
 
         if train_batch_loop % 200 == 0:
@@ -206,7 +208,6 @@ for train_loop_epoch in range(1800):
 # print(train_channel_data_current.shape)
 # print(sess.run(index_order, feed_dict={x_image: train_channel_data_current, keep_prob: 1.0}))
 
-saver.save(sess, ".//model//tensorflow_model//tensorflow_4d_Model")
 
 
 # test_channel_data = []
