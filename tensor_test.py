@@ -79,7 +79,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"), name='acc')
 sess.run(tf.initialize_all_variables())
 # sess.run(tf.global_variables_initializer())
 
-saver = tf.train.Saver()
+saver = tf.train.Saver(max_to_keep=1, keep_checkpoint_every_n_hours=1)
 
 
 # images = [np.zeros(28 * 28 * 28 * 28), np.ones(28 * 28 * 28 * 28)]
