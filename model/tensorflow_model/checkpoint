@@ -1,0 +1,2 @@
+model_checkpoint_path: "tensorflow_4d_Model"
+all_model_checkpoint_paths: "tensorflow_4d_Model"
