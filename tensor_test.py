@@ -161,7 +161,7 @@ def creat_batch_data(batch=50):
 
 
 for train_loop_epoch in range(1800):
-    batch = 1
+    batch = 50
     train_channel_data_current, train_channel_label_current = creat_batch_data(batch=batch)
 
     print('-----------------------------------------------------------')
@@ -181,7 +181,7 @@ for train_loop_epoch in range(1800):
 
             train_accuracy, cross_enctropy, index = sess.run([accuracy, cross_entropy, index_order],
                                                              feed_dict=feed_dict)
-            print("train accuracy: %g" % train_accuracy, "cross_enctropy: %g", cross_enctropy)
+            print("train accuracy: %g" % train_accuracy, "cross_enctropy: %g" % cross_enctropy)
             print(index)
 
 
