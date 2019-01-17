@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+from matplotlib import pyplot as plt
 
 sess = tf.InteractiveSession()
 # saver = tf.train.Saver()
@@ -32,3 +33,10 @@ for i in range(0, test_channel_data_depth.shape[0], test_batch):
     feed_dict = {x_image: test_channel_data_depth[i:i + test_batch], keep_prob: 1.0}
     predict_result_list.extend(sess.run(result_list, feed_dict=feed_dict))
     print(len(predict_result_list))
+
+predict_result_list = np.array(predict_result_list)
+predict_result_list=np.reshape(predict_result_list, [122,122])
+
+np.save(".//visual//data",predict_result_list)
+plt.imshow(predict_result_list, cmap='gray')
+plt.show()
