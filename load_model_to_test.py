@@ -23,7 +23,7 @@ images = np.reshape(images, [2, 10, 28, 28, 9, 1])
 images = images.astype(np.float)
 
 # ".//data//test//test_channel_data_depth8.npy,"
-def test_and_save_result(file_path,save_path,test_batch=300):
+def test_and_save_result(file_path,save_path,test_batch=100):
     # data
     test_channel_data_depth = np.load(file_path)
     test_channel_data_depth = np.reshape(test_channel_data_depth, [-1, 10, 9, 28, 28, 1])
