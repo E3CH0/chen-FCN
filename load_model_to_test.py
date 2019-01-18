@@ -39,9 +39,9 @@ def test_and_save_result(file_path,save_path,test_batch=100):
     np.save(save_path, predict_result_list)
 
 for i in range(0,19):
-    file_parent_path=".//data//test//"
+    file_parent_path=".//data//test"
     if len( sys.argv)>1:
         file_parent_path=sys.argv[1]
-    file_path=file_parent_path+"test_channel_data_depth"+str(i)+".npy"
+    file_path=file_parent_path+"//test_channel_data_depth"+str(i)+".npy"
     save_path=".//visual//data//test_channel_data_depth"+str(i)
     test_and_save_result(file_path,save_path)
