@@ -34,6 +34,9 @@ import gc
 # attribute_list = ['amp', 'AzimuthValue', 'ChaosValue', 'CoherenceValue',
 #                   'ContinuityValue', 'DipValue', 'FaultValue', 'LineLikeValue', 'PlaneLikeValue']
 
+#up down left right 是整个图片201*301的选择的部分位置区域
+#image_wide/height 是训练数据图片的大小
+#step是移动的距离
 def load_train_data_and_label(channel_data_file_path="F://echo//bishe//code//DATA//channel.npy",
                               channel_label_file_path="F://echo//bishe//code//DATA//river_3d_label.npy",
                               image_wide=33, image_height=33, wide_step=5, height_step=5,

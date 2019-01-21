@@ -16,7 +16,9 @@ saver.restore(sess, model_path)
 x_image = sess.graph.get_tensor_by_name("input:0")
 keep_prob = sess.graph.get_tensor_by_name("keep_prob:0")
 result = sess.graph.get_operation_by_name("output").outputs[0]
-result_list = tf.argmax(result, 1)
+# result_list = tf.argmax(result, 1)
+result_list = result[:,1]
+
 
 images = np.ones(2 * 10 * 28 * 28 * 9 * 1)
 images = np.reshape(images, [2, 10, 28, 28, 9, 1])
@@ -43,5 +45,5 @@ for i in range(0,19):
     if len( sys.argv)>1:
         file_parent_path=sys.argv[1]
     file_path=file_parent_path+"//test_channel_data_depth"+str(i)+".npy"
-    save_path=".//visual//data//test_channel_data_depth"+str(i)
+    save_path=".//visual//data//test_channel_resut_tensor_depth_"+str(i)
     test_and_save_result(file_path,save_path)
